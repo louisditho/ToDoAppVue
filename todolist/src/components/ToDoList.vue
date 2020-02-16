@@ -26,21 +26,23 @@
           required
         />
         <button type="submit" @click="addToDo">Add To Do List</button>
-        <div v-for="(todo,index) in todos" :key="todo.id ">
-          <div class="main-point" v-if="!todo.edit">
-            {{ todo.title }} - {{ todo.description }} - {{ todo.dueDate }} -
-            <span>
-              <button type="button" @click="editToDo(todo)">Edit</button>
-            </span>
-            <span>
-              <button type="button" @click="removeToDo(index)">remove</button>
-            </span>
-          </div>
-          <div v-if="todo.edit" class="edit-point">
-            <input type="text" v-model="todo.title" />
-            <textarea row="5" v-model="todo.description"></textarea>
-            <input type="date " v-model="todo.dueDate" />
-            <buttton type="button" @click="saveEditToDo(todo)">save</buttton>
+        <div id="sortable">
+          <div v-for="(todo,index) in todos" :key="todo.id ">
+            <div class="main-point" v-if="!todo.edit">
+              {{ todo.title }} - {{ todo.description }} - {{ todo.dueDate }} -
+              <span>
+                <button type="button" @click="editToDo(todo)">Edit</button>
+              </span>
+              <span>
+                <button type="button" @click="removeToDo(index)">remove</button>
+              </span>
+            </div>
+            <div v-if="todo.edit" class="edit-point">
+              <input type="text" v-model="todo.title" />
+              <textarea row="5" v-model="todo.description"></textarea>
+              <input type="date " v-model="todo.dueDate" />
+              <button type="button" @click="saveEditToDo(todo)">save</button>
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +58,7 @@ export default {
       newToDoDate: "",
       newToDoDescription: "",
       idForToDo: "3",
+      order: null,
       todos: [
         {
           id: "1",
@@ -110,6 +113,26 @@ export default {
     saveEditToDo(todo) {
       todo.edit = false;
     }
+  },
+  computed: {
+    sortedItems: function() {
+      if (!this.order) {
+        return this.todos;
+      }
+      return this.order.map(i => this.items[i]);
+    }
+  },
+  mounted: function() {
+    this.$nextTick(() => {
+      const sortable = Sortable.create(document.getElementById("sortable"), {
+        animation: 200,
+        onUpdate: () => {
+          this.order = sortable.toArray();
+        }
+      });
+    });
+
+    console.log("masuk gak ya?");
   }
 };
 </script>
