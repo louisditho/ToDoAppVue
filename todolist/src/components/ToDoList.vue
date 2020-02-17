@@ -27,9 +27,10 @@
         />
         <button type="submit" @click="addToDo">Add To Do List</button>
         <div id="sortable">
-          <div v-for="(todo,index) in todos" :key="todo.id ">
-            <div class="main-point" v-if="!todo.edit">
-              {{ todo.title }} - {{ todo.description }} - {{ todo.dueDate }} -
+          <div v-for="(todo,index) in todosFilter" :key="todo.id ">
+            <div class="main-point" v-if="!todo.edit" :class="{checked : todo.completed === true}">
+              <input type="checkbox" v-model="todo.completed" />
+              - {{ todo.title }} - {{ todo.description }} - {{ todo.dueDate }} -
               <span>
                 <button type="button" @click="editToDo(todo)">Edit</button>
               </span>
@@ -40,10 +41,26 @@
             <div v-if="todo.edit" class="edit-point">
               <input type="text" v-model="todo.title" />
               <textarea row="5" v-model="todo.description"></textarea>
-              <input type="date " v-model="todo.dueDate" />
+              <input type="date" v-model="todo.dueDate" />
+              <button type="button" @click="cancelEditToDo(todo)">cancel</button>
               <button type="button" @click="saveEditToDo(todo)">save</button>
             </div>
           </div>
+        </div>
+        <div class="total-todo">
+          <span>{{ remaining }} To Do List</span>
+          <span>
+            <input type="checkbox" :checked="!notAnyRemaining" @change="changeAllTodos" /> Check All
+          </span>
+        </div>
+        <div class="filter">
+          <button :class="{activated : filter == 'all'}" @click="filter = 'all'">Show All</button>
+          <button :class="{activated : filter == 'active'}" @click="filter = 'active'">Active</button>
+          <button
+            :class="{activated : filter == 'completed'}"
+            @click="filter = 'completed'"
+          >Completed</button>
+          <button v-if="showClearCompleted" @click="clearCompleted">clear Completed</button>
         </div>
       </div>
     </div>
@@ -59,6 +76,10 @@ export default {
       newToDoDescription: "",
       idForToDo: "3",
       order: null,
+      beforeEdit: "",
+      beforeEditDueDate: "",
+      beforeEditDescription: "",
+      filter: "all",
       todos: [
         {
           id: "1",
@@ -78,6 +99,27 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+    remaining() {
+      return this.todos.filter(todo => !todo.completed).length;
+    },
+    notAnyRemaining() {
+      return this.remaining != 0;
+    },
+    todosFilter() {
+      if (this.filter == "all") {
+        return this.todos;
+      } else if (this.filter == "active") {
+        return this.todos.filter(todo => !todo.completed);
+      } else if (this.filter == "completed") {
+        return this.todos.filter(todo => todo.completed);
+      }
+      return this.todos;
+    },
+    showClearCompleted() {
+      return this.todos.filter(todo => todo.completed).length;
+    }
   },
   methods: {
     addToDo() {
@@ -108,18 +150,36 @@ export default {
       this.todos.splice(index, 1);
     },
     editToDo(todo) {
+      if (todo.title == 0) {
+        todo.title = this.beforeEdit;
+      }
+      if (todo.dueDate == 0) {
+        todo.dueDate = this.beforeEditDueDate;
+      }
+      if (todo.descriptions == 0) {
+        todo.description = this.beforeEditDescription;
+      }
+      this.beforeEdit = todo.title;
+      this.beforeEditDueDate = todo.dueDate;
+      this.beforeEditDescription = todo.description;
       todo.edit = true;
     },
     saveEditToDo(todo) {
       todo.edit = false;
-    }
-  },
-  computed: {
-    sortedItems: function() {
-      if (!this.order) {
-        return this.todos;
-      }
-      return this.order.map(i => this.items[i]);
+    },
+    cancelEditToDo(todo) {
+      todo.title = this.beforeEdit;
+      todo.dueDate = this.beforeEditDueDate;
+      todo.description = this.beforeEditDescription;
+      todo.edit = false;
+    },
+    changeAllTodos() {
+      this.todos.forEach(function(todo) {
+        todo.completed = event.target.checked;
+      });
+    },
+    clearCompleted() {
+      this.todos = this.todos.filter(todo => !todo.completed);
     }
   },
   mounted: function() {
@@ -131,11 +191,16 @@ export default {
         }
       });
     });
-
-    console.log("masuk gak ya?");
   }
 };
 </script>
 
 <style scoped>
+.main-point.checked {
+  font-style: italic;
+  font-weight: bold;
+}
+.filter .activated {
+  font-weight: bold;
+}
 </style>
