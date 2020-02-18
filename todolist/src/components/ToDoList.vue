@@ -60,13 +60,17 @@
             :class="{activated : filter == 'completed'}"
             @click="filter = 'completed'"
           >Completed</button>
-          <button v-if="showClearCompleted" @click="clearCompleted">clear Completed</button>
+          <transition name="fade">
+            <button v-if="showClearCompleted" @click="clearCompleted">clear Completed</button>
+          </transition>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import "../assets/todo.css";
+
 export default {
   name: "todo-list",
   data() {
@@ -195,12 +199,24 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .main-point.checked {
   font-style: italic;
   font-weight: bold;
 }
-.filter .activated {
-  font-weight: bold;
+.filter {
+  .activated {
+    font-weight: bold;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
