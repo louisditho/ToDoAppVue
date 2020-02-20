@@ -132,6 +132,9 @@
       </div>
     </div>
     <div class="space-100"></div>
+    <router-link tag="li" to="/learnapi">
+      <a>Practice API</a>
+    </router-link>
   </div>
 </template>
 <script>

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@vue/composition-api": "^0.4.0",
     "vue": "^2.6.11"
   },
   "devDependencies": {
