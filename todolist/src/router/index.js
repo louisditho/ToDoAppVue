@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import TodoList from '@/components/ToDoList'
 import LearnApi from '@/components/LearnApi'
+import TodoWithApi from '@/components/ToDoWithApi'
 
 Vue.use(Router)
 
@@ -21,6 +22,11 @@ export default new Router({
       path: '/learnapi',
       name: 'LearnAPI',
       component: LearnApi
+    },
+    {
+      path: '/todoapi',
+      name: 'TodoWithApi',
+      component: TodoWithApi
     }
   ]
 })

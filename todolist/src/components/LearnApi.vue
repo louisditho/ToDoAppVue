@@ -12,7 +12,7 @@
         <a href="https://api.openbrewerydb.org/breweries/">https://api.openbrewerydb.org/breweries/</a>
       </div>
       <div>
-        <div class="content" v-for="brow in brewers" :key="brow.id">
+        <div class="content" v-for="brow in list" :key="brow.id">
           <div>
             <span>Name :</span>
             <span>{{brow.name}}</span>
@@ -36,32 +36,12 @@
 </template>
 
 <script>
+import useBrewList from "../compose/use-brew-list";
 export default {
   name: "Learn-API",
-  data() {
-    return {
-      val: "",
-      brewers: []
-    };
-  },
-  computed: {
-    async showApi() {
-      const response = await fetch(`https://api.openbrewerydb.org/breweries/`);
-      const json = await response.json();
-      this.brewers = json;
-      console.log(json);
-      return;
-    }
-  },
-  methods: {
-    async submitted() {
-      const response = await fetch(
-        `https://api.openbrewerydb.org/breweries/?by_name=${this.val}`
-      );
-      const json = await response.json();
-      this.brewers = json;
-      console.log(json);
-    }
+  setup() {
+    const { val, list, submitted } = useBrewList();
+    return { val, list, submitted };
   }
 };
 </script>
